@@ -37,12 +37,12 @@ namespace GeradorDeClientes.Pages
 
         public async Task<IActionResult> OnPost()
         {
-            _logger.LogInformation("Login attempt for {Email}", Usuario?.Email ?? "(null)");
+            _logger.LogInformation("Tentativa de login para {Email}", Usuario?.Email ?? "(null)");
 
             if (Usuario == null || string.IsNullOrEmpty(Usuario.Email) || string.IsNullOrEmpty(Usuario.Senha))
             {
                 MensagemErro = "Usuário ou senha inválidos.";
-                _logger.LogInformation("Login failed due to missing credentials for {Email}", Usuario?.Email ?? "(null)");
+                _logger.LogInformation("Falha no login por credenciais ausentes para {Email}", Usuario?.Email ?? "(null)");
                 return Page();
             }
 
@@ -60,12 +60,12 @@ namespace GeradorDeClientes.Pages
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                _logger.LogInformation("Login successful for {Email}", Usuario.Email);
+                _logger.LogInformation("Login realizado com sucesso para {Email}", Usuario.Email);
                 return RedirectToPage("/GerarExcel");
             }
 
             MensagemErro = "Usuário ou senha inválidos.";
-            _logger.LogInformation("Login failed for {Email}", Usuario.Email);
+            _logger.LogInformation("Falha no login para {Email}", Usuario.Email);
             return Page();
         }
     }

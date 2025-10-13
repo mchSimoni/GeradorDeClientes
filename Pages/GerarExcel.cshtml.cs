@@ -59,7 +59,7 @@ namespace GeradorDeClientes.Pages
                 
                 try
                 {
-                    _logger.LogInformation("OnPost called with bound quantidade={Quantidade}, action={Action}, delimiter={Delimiter}, targetEmail={TargetEmail}", quantidade, action, delimiter, targetEmail);
+                    _logger.LogInformation("OnPost chamado com quantidade={Quantidade}, action={Action}, delimiter={Delimiter}, targetEmail={TargetEmail}", quantidade, action, delimiter, targetEmail);
                     foreach (var key in Request.Form.Keys)
                     {
                         _logger.LogInformation("Form[{Key}] = {Value}", key, Request.Form[key]);
@@ -70,11 +70,11 @@ namespace GeradorDeClientes.Pages
                     {
                         if (qFromForm != quantidade)
                         {
-                            _logger.LogInformation("Overriding bound quantidade {Bound} with form value {FormVal}", quantidade, qFromForm);
+                            _logger.LogInformation("Substituindo quantidade vinculada {Bound} pelo valor do formulário {FormVal}", quantidade, qFromForm);
                             quantidade = qFromForm;
                         }
                     }
-                    // assign to model property so the view preserves the user input
+                    // atribui à propriedade do modelo para preservar o input do usuário
                     Quantidade = quantidade;
                 }
                 catch (Exception ex)
