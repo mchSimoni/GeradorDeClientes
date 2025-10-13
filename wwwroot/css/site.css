@@ -15,7 +15,7 @@ body{background:var(--bg);margin:0;}
 
 /* layout */
 .container{max-width:var(--max-width);}
-.content-wrap{display:block;padding-top:24px;padding-bottom:110px}
+.content-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:24px;padding-bottom:110px}
 header{background:transparent}
 .navbar-brand{font-weight:700;color:var(--accent)!important}
 .navbar{padding:0.5rem 0}
@@ -68,6 +68,18 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 
 /* login */
 .login-box{max-width:460px;margin:28px auto;padding:28px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+
+/* Ensure login/register forms are centered on wide screens as well */
+.login-page main, .register-page main, .content-wrap {
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+/* vertically center on taller viewports if desired */
+@media(min-height:700px){
+  .content-wrap{justify-content:center;min-height:calc(100vh - 160px)}
+}
 
 .login-box h2{color:#222}
 .login-box .form-label{color:#2e3438}
