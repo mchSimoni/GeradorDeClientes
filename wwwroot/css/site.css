@@ -34,10 +34,10 @@ main{padding:24px 0}
 
 /* form styles */
 .form-label{font-weight:600;color:#2e3438}
-.form-control{border-radius:8px;border:1px solid #e6e9ec;padding:10px 12px;background:#fff;color:#222}
+.form-control{border-radius:8px;border:1px solid #e6e9ec;padding:12px 14px;background:#fff;color:#222;font-size:1rem}
 .form-control:focus{box-shadow:0 10px 30px rgba(43,138,62,0.07);border-color:var(--accent);outline:0}
 
-.btn-primary{background:var(--accent);border-color:var(--accent);box-shadow:none;border-radius:8px;padding:10px 16px;color:#fff;font-weight:600}
+.btn-primary{background:var(--accent);border-color:var(--accent);box-shadow:none;border-radius:8px;padding:12px 20px;color:#fff;font-weight:700;font-size:0.98rem}
 .btn-primary:hover{filter:brightness(0.96)}
 .btn-outline{background:transparent;border:1px solid #d6dbe0;color:#333;border-radius:8px;padding:8px 14px}
 
@@ -75,6 +75,11 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 /* login */
 /* Card used on auth pages */
 .login-box{max-width:520px;margin:0 auto;padding:28px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+
+/* Center the auth card exactly in the viewport on auth pages */
+.login-page .container.content-wrap{position:relative}
+.login-page main{width:100%}
+.login-page .login-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:560px;padding:32px}
 
 /* Ensure the main renders the login box centered */
 main .login-box{margin-top:0}
