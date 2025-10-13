@@ -24,6 +24,7 @@ Thumbs.db
 App_Data/users.json
 wwwroot/emails_test/
 appsettings.Development.json
+wwwroot/logs/
 
 # Keep VS Code run/debug configs but ignore other local settings
 .vscode/*
