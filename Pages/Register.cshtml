@@ -1,0 +1,32 @@
+@page
+@model GeradorDeClientes.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="register-box">
+    <h2>Cadastro</h2>
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" asp-for="Usuario.Email" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Senha</label>
+            <input class="form-control" type="password" asp-for="Usuario.Senha" required />
+            <small class="form-text text-muted">Mínimo 8 caracteres, letras maiúsculas, minúsculas e números.</small>
+        </div>
+
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit">Cadastrar</button>
+            <a class="btn btn-link" href="/Login">Voltar ao login</a>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Mensagem))
+        {
+            <div class="alert alert-danger" role="alert">@Model.Mensagem</div>
+        }
+    </form>
+</div>

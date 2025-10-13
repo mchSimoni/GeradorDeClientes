@@ -1,0 +1,145 @@
+﻿@page
+@model GeradorDeClientes.Pages.GerarExcelModel
+@{
+    ViewData["Title"] = "Gerar Excel";
+}
+
+<h2>Gerar Arquivo Excel</h2>
+
+<div class="card-soft">
+<form id="gerarForm" method="post">
+    <input type="hidden" name="action" id="actionHidden" value="" />
+    <div class="mb-3">
+        <label class="form-label">Quantidade de registros (10-1000):</label>
+        <input class="form-control" type="number" name="quantidade" min="10" max="1000" value="@Model.Quantidade" required />
+    </div>
+
+    <div style="margin-top:8px;">
+        
+        <div style="margin-top:6px; font-size:0.95rem; color:#333;">Formato do arquivo: <strong>XLSX</strong></div>
+    </div>
+
+    <div class="mb-3">
+    <button id="btn-gerar" class="btn btn-outline" type="submit">Gerar XLSX</button>
+    <button id="show-email-btn" class="btn btn-outline" type="button">Enviar por e-mail</button>
+    </div>
+
+    <div id="email-area" style="display:none; margin-top:10px;" class="mb-3">
+        <label class="form-label">Enviar para (email):</label>
+        <div class="d-flex">
+            <input class="form-control" style="max-width:420px;" type="email" name="targetEmail" />
+            <button id="btn-enviar" class="btn btn-primary" style="margin-left:8px;" type="submit">Enviar</button>
+        </div>
+    </div>
+</form>
+
+<div id="submitMessage" style="margin-top:10px; color:#333; display:none;">Gerando arquivo, aguarde...</div>
+
+@* SMTP diagnostic message intentionally hidden per UX request *@
+
+@if (!string.IsNullOrEmpty(Model.Mensagem))
+{
+    <p style="color:green; margin-top:10px;">@Model.Mensagem</p>
+}
+
+@if (!string.IsNullOrEmpty(Model.PreviewHtml))
+{
+    <div style="margin-top:12px;" class="preview-wrapper">@Html.Raw(Model.PreviewHtml)</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.LinkArquivo))
+{
+    <div style="margin-top:10px;">
+        
+        <a class="btn btn-primary" href="@Url.Page("./GerarExcel", new { handler = "Download", file = Model.LinkArquivo })">Baixar arquivo</a>
+    </div>
+}
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var showEmail = document.getElementById('show-email-btn');
+    var emailArea = document.getElementById('email-area');
+    // Ensure the form variable exists before using it
+    var form = document.getElementById('gerarForm');
+    if (showEmail && emailArea) {
+        // Ensure input is disabled when hidden to avoid blocking form submit
+        var input = document.querySelector('#email-area input[name="targetEmail"]');
+        if (input) input.disabled = true;
+
+        showEmail.addEventListener('click', function(e) {
+            e.preventDefault();
+            var isHidden = emailArea.style.display === 'none';
+            if (isHidden) {
+                // show the email area and focus
+                emailArea.style.display = 'block';
+                if (input) { input.disabled = false; input.focus(); }
+                return;
+            }
+
+            // If already visible, attempt to submit if email is filled
+            if (input) {
+                var emailVal = input.value.trim();
+                if (!emailVal) {
+                    input.focus();
+                    return; // don't submit if empty
+                }
+                // Instead of programmatic submit with possible ambiguity, set the hidden action
+                // and trigger a click on the enviar button so the browser includes the correct value.
+                var actionHidden = document.getElementById('actionHidden');
+                var enviarBtn = document.getElementById('btn-enviar');
+                if (actionHidden) actionHidden.value = 'enviar';
+                // Ensure targetEmail is enabled so it gets posted
+                input.disabled = false;
+                if (enviarBtn) {
+                    // trigger a click on the enviar button which will submit the form
+                    enviarBtn.click();
+                } else {
+                    form.submit();
+                }
+            }
+        });
+    }
+
+    // Feedback on form submit: show message and disable buttons shortly after click
+    var submitMessage = document.getElementById('submitMessage');
+    if (form) {
+        // wire gerar and enviar buttons to set hidden action before submit
+        var gerarBtn = document.getElementById('btn-gerar');
+        var enviarBtn = document.getElementById('btn-enviar');
+        var actionHidden = document.getElementById('actionHidden');
+
+        if (gerarBtn) {
+            gerarBtn.addEventListener('click', function(evt){
+                if (actionHidden) actionHidden.value = 'gerar';
+                if (submitMessage) { submitMessage.textContent = 'Gerando arquivo, aguarde...'; submitMessage.style.display = 'block'; }
+                // disable buttons shortly after to avoid double submit
+                setTimeout(function(){
+                    var buttons = form.querySelectorAll('button');
+                    buttons.forEach(function(bb){ bb.disabled = true; });
+                }, 50);
+            });
+        }
+
+        if (enviarBtn) {
+            enviarBtn.addEventListener('click', function(evt){
+                if (actionHidden) actionHidden.value = 'enviar';
+                if (submitMessage) { submitMessage.textContent = 'Enviando por e-mail, aguarde...'; submitMessage.style.display = 'block'; }
+                setTimeout(function(){
+                    var buttons = form.querySelectorAll('button');
+                    buttons.forEach(function(bb){ bb.disabled = true; });
+                }, 50);
+            });
+        }
+
+        // Fallback: ensure submit message shown for programmatic submits
+        form.addEventListener('submit', function(e) {
+            if (submitMessage) submitMessage.style.display = 'block';
+        });
+    }
+
+    // Update button labels according to selected format
+    // Buttons are static for XLSX only
+});
+</script>

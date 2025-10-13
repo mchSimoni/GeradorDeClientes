@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeradorDeClientes", "GeradorDeClientes.csproj", "{44399799-5313-FA26-755A-2468B111F488}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44399799-5313-FA26-755A-2468B111F488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44399799-5313-FA26-755A-2468B111F488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44399799-5313-FA26-755A-2468B111F488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44399799-5313-FA26-755A-2468B111F488}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7AE19956-C47C-4F5F-8B4B-16CED0313D7F}
+	EndGlobalSection
+EndGlobal

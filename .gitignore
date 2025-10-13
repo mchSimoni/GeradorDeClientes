@@ -1,0 +1,66 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User data and generated files
+App_Data/users.json
+wwwroot/emails_test/
+appsettings.Development.json
+
+# Keep VS Code run/debug configs but ignore other local settings
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/kill-dotnet.ps1
+
+# NuGet
+*.nupkg
+packages/
+
+# Database
+*.db
+*.sqlite
+# Build outputs
+/bin/
+/obj/
+
+# User secrets and local settings
+.vs/
+*.user
+secrets.json
+
+# Visual Studio cache
+.vs/
+*.suo
+*.userprefs
+
+# ASP.NET temporary files
+wwwroot/lib/
+wwwroot/css/*.map
+
+# Rider
+/.idea/
+
+# Logs
+*.log
+
+# Publish output
+/publish/
