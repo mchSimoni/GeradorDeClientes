@@ -14,7 +14,11 @@
             <div class="container d-flex align-items-center justify-content-between">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">GeradorDeClientes</a>
 
-                <div class="d-none d-sm-block"></div>
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-outline mx-2 d-none d-sm-inline" asp-page="/Login">Entrar</a>
+                    <a class="btn btn-primary mx-2 d-none d-sm-inline" asp-page="/Register">Registrar</a>
+                    <!-- small screen: collapse into dropdown handled by Bootstrap if needed -->
+                </div>
             </div>
         </nav>
     </header>
