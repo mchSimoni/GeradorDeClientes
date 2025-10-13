@@ -9,62 +9,43 @@ Before you push
 - Confirm `.gitignore` is present (it excludes `App_Data/users.json`, `appsettings.Development.json` and `wwwroot/emails_test/`).
 
 Storing secrets locally (recommended)
-------------------------------------
-1) Using dotnet user-secrets (per-project, recommended for development):
-
-   # from project folder (PowerShell)
-   dotnet user-secrets init
-   dotnet user-secrets set "Smtp:Host" "smtp.example.com"
-   dotnet user-secrets set "Smtp:Port" "587"
-   dotnet user-secrets set "Smtp:User" "your-smtp-user@example.com"
-   dotnet user-secrets set "Smtp:Pass" "your-smtp-password"
-   dotnet user-secrets set "Smtp:ForcePickup" "false"
-
-2) Or use environment variables (CI/CD or production):
-
-   # PowerShell example
-   $env:Smtp__Host = 'smtp.example.com'; $env:Smtp__Port = '587'; $env:Smtp__User = 'your-smtp-user@example.com'; $env:Smtp__Pass = 'your-smtp-password'; $env:Smtp__ForcePickup = 'false'
-
-Preparing and pushing to GitHub
--------------------------------
-If you want me to push the code for you, I will need either:
-
-- A remote URL for the repository you already created (HTTPS or SSH), and your approval to run git commands locally, or
-- You authenticate locally with the GitHub CLI (`gh auth login`) and I can create the remote and push.
 GeradorDeClientes
 =================
 
-Aplicação em ASP.NET Core Razor Pages que gera um arquivo Excel (.xlsx) com dados fictícios de clientes e permite enviar o arquivo por e-mail.
+Aplicação ASP.NET Core Razor Pages que gera um arquivo Excel (.xlsx) com dados de clientes fictícios e permite enviar o arquivo por e-mail.
 
-Antes de publicar
-------------------
-- Não inclua senhas nem outros segredos no repositório. Utilize `dotnet user-secrets` para desenvolvimento ou variáveis de ambiente em produção.
-- O arquivo `.gitignore` já está configurado para excluir `App_Data/users.json`, `appsettings.Development.json` e `wwwroot/emails_test/`.
+Importante antes de publicar
+----------------------------
+- Não inclua senhas nem outros segredos no repositório. Use `dotnet user-secrets` para desenvolvimento e variáveis de ambiente em produção.
+- O `.gitignore` está configurado para excluir arquivos sensíveis e artefatos (ex.: `App_Data/users.json`, `appsettings.Development.json`, `wwwroot/emails_test/`).
 
-Configuração de segredos (opções)
---------------------------------
-1) dotnet user-secrets (recomendado para desenvolvimento):
+Configuração de segredos
+------------------------
+1) Usando dotnet user-secrets (recomendado para desenvolvimento):
 
-   # no diretório do projeto (PowerShell)
-   dotnet user-secrets init
-   dotnet user-secrets set "Smtp:Host" "smtp.seuprovedor.com"
-   dotnet user-secrets set "Smtp:Port" "587"
-   dotnet user-secrets set "Smtp:User" "seu-usuario@provedor.com"
-   dotnet user-secrets set "Smtp:Pass" "sua-senha"
-   dotnet user-secrets set "Smtp:ForcePickup" "false"
+```powershell
+cd C:\caminho\para\o\projeto
+dotnet user-secrets init
+dotnet user-secrets set "Smtp:Host" "smtp.seuprovedor.com"
+dotnet user-secrets set "Smtp:Port" "587"
+dotnet user-secrets set "Smtp:User" "seu-usuario@provedor.com"
+dotnet user-secrets set "Smtp:Pass" "sua-senha"
+dotnet user-secrets set "Smtp:ForcePickup" "false"
+```
 
-2) Variáveis de ambiente (CI/CD ou produção):
+2) Usando variáveis de ambiente (CI/CD ou produção):
 
-   # PowerShell exemplo
-   $env:Smtp__Host = 'smtp.seuprovedor.com'
-   $env:Smtp__Port = '587'
-   $env:Smtp__User = 'seu-usuario@provedor.com'
-   $env:Smtp__Pass = 'sua-senha'
-   $env:Smtp__ForcePickup = 'false'
+```powershell
+$env:Smtp__Host = 'smtp.seuprovedor.com'
+$env:Smtp__Port = '587'
+$env:Smtp__User = 'seu-usuario@provedor.com'
+$env:Smtp__Pass = 'sua-senha'
+$env:Smtp__ForcePickup = 'false'
+```
 
-Como publicar no GitHub
------------------------
-1. Crie um repositório no GitHub (por exemplo `GeradorDeClientes`).
+Publicação no GitHub
+--------------------
+1. Crie um repositório no GitHub (ex.: `GeradorDeClientes`).
 2. No diretório do projeto local execute:
 
 ```powershell
@@ -77,7 +58,7 @@ git push -u origin main
 ```
 
 Execução local
----------------
+--------------
 1. Restaurar dependências e compilar:
 
 ```powershell
@@ -91,13 +72,18 @@ dotnet build
 dotnet run --project .\GeradorDeClientes.csproj
 ```
 
-3. Acesse `http://localhost:<porta>` conforme exibido pelo dotnet e faça login com as credenciais de teste (se configuradas).
+3. Acesse `http://localhost:<porta>` conforme exibido pelo dotnet.
 
-Notas importantes
------------------
-- O hash de senha usado é SHA256 apenas para demonstração. Em produção, utilize um algoritmo de derivação de chave (PBKDF2, Argon2, bcrypt).
+Observações
+-----------
+- O algoritmo de hash SHA256 foi usado apenas para demonstração no exemplo. Para produção, utilize um KDF adequado (PBKDF2, Argon2, bcrypt).
 - Não comite credenciais no repositório. Use user-secrets ou variáveis de ambiente.
+- Artefatos de build (pasta `bin/`) são gerados automaticamente; se houver necessidade de remover vestígios, execute `dotnet clean` e reconstrua.
 
-Contato e deploy
-----------------
-Se desejar automatizar deploy ou configurar GitHub Actions, inclua os secrets apropriados no repositório e adicione workflows conforme necessário.
+Deploy e automação
+-------------------
+Para automatizar deploy com GitHub Actions, configure os secrets necessários no repositório (por exemplo, `AZURE_WEBAPP_NAME` e `AZURE_PUBLISH_PROFILE`) e adicione workflows conforme a infraestrutura desejada.
+
+Suporte
+-------
+Este repositório contém a aplicação fonte e instruções para execução local. Ajustes adicionais podem ser feitos conforme necessidade do ambiente de produção.
