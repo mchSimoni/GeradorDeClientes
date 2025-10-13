@@ -79,7 +79,12 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 /* Center the auth card exactly in the viewport on auth pages */
 .login-page .container.content-wrap{position:relative}
 .login-page main{width:100%}
-.login-page .login-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:560px;padding:32px}
+.login-page .login-box{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);max-width:560px;padding:32px}
+
+/* On small screens use normal flow instead of fixed positioning */
+@media(max-width:767px){
+  .login-page .login-box{position:relative;left:auto;top:auto;transform:none;max-width:92%;margin:24px auto}
+}
 
 /* Ensure the main renders the login box centered */
 main .login-box{margin-top:0}
