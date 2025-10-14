@@ -18,21 +18,24 @@ body{background:var(--bg);margin:0;-webkit-font-smoothing:antialiased; -moz-osx-
 
 /* layout */
 .container{max-width:var(--max-width);padding-left:var(--container-padding);padding-right:var(--container-padding);} 
-.content-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:36px;padding-bottom:80px;gap:20px;min-height:calc(100vh - 120px)}
+.content-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:12px;padding-bottom:60px;gap:20px;min-height:calc(100vh - 120px)}
 header{background:transparent}
 .navbar-brand{font-weight:700;color:var(--accent)!important;letter-spacing:0.2px}
 .navbar{padding:0.3rem 0}
 
+/* Make header container taller and center its content vertically */
+header .container{min-height:160px;display:flex;align-items:center;justify-content:center}
+
 /* Site title styling (fixed, centered) */
 .site-title{
-  /* place the title closer to the content rather than pinning to top */
+  /* larger title centered inside a taller header */
   position:relative;
   display:block;
   width:-webkit-fit-content;
   width:-moz-fit-content;
   width:fit-content;
-  margin:100px auto 12px auto; /* move title down closer to login card */
-  font-size:2.6rem; /* bigger */
+  margin:18px auto 8px auto; /* small vertical margins; header controls spacing */
+  font-size:3rem; /* larger */
   font-weight:900;
   color:var(--accent) !important;
   text-align:center;
@@ -95,12 +98,12 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 
 /* login */
 /* Card used on auth pages */
-.login-box{max-width:520px;margin:0 auto;padding:28px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
+.login-box{max-width:520px;margin:0 auto;padding:36px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
 
 /* Center the auth card exactly in the viewport on auth pages */
 .login-page .container.content-wrap{position:relative}
 .login-page main{width:100%}
-.login-page .login-box{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);max-width:560px;padding:32px}
+.login-page .login-box{position:fixed;left:50%;top:55%;transform:translate(-50%,-50%);max-width:560px;padding:36px}
 
 /* On small screens use normal flow instead of fixed positioning */
 @media(max-width:767px){
