@@ -207,17 +207,20 @@ main .login-box{margin-top:0}
   /* Force the gerar card to be centered in the viewport regardless of wrapper containers */
   position:fixed !important;
   left:50% !important;
-  top:62% !important; /* push the card lower so it doesn't overlap the title */
+  top:50% !important; /* center vertically */
   transform:translate(-50%,-50%) !important;
   width:100%;
-  max-width:980px;
+  max-width:100%;
   margin:0 !important;
-  padding:0 20px !important;
+  padding:12px 20px !important;
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
   flex-direction:column !important;
   z-index:20;
+  /* keep the box from touching the footer by limiting its height and allowing internal scroll */
+  max-height:calc(100vh - 160px);
+  overflow-y:auto;
 }
 
 .gerar-card{padding-top:28px}
@@ -228,11 +231,15 @@ main .login-box{margin-top:0}
   .floating-title{position:relative !important;top:auto !important;transform:none !important;left:auto !important;margin:8px auto}
 }
 .gerar-box h2{color:#f6fbfc;margin-bottom:14px;text-align:center}
-.gerar-card{max-width:420px;padding:18px 18px 22px;background:linear-gradient(180deg, rgba(8,12,18,0.95), rgba(7,10,16,0.97));border-radius:12px;box-shadow:0 14px 40px rgba(2,6,10,0.5);border:1px solid rgba(255,255,255,0.02)}
+.gerar-card{max-width:920px;width:95%;padding:18px 18px 22px;background:linear-gradient(180deg, rgba(8,12,18,0.95), rgba(7,10,16,0.97));border-radius:12px;box-shadow:0 14px 40px rgba(2,6,10,0.5);border:1px solid rgba(255,255,255,0.02);margin-bottom:36px}
 .gerar-card .form-control{width:90px;color:#e6eef3;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.03);padding:8px 10px;height:38px;border-radius:8px}
 .gerar-card .btn-outline{border-color:rgba(255,255,255,0.06);color:#cbd6da;background:transparent;padding:6px 10px;border-radius:8px}
 .gerar-card .btn-primary{padding:8px 14px}
 .gerar-card .d-flex{gap:8px}
+
+/* ensure preview takes full available width inside the card */
+.gerar-card .preview-wrapper{width:100%;box-sizing:border-box;padding:10px;max-height:420px;overflow:auto}
+.gerar-card .preview-wrapper table.preview{width:100%}
 
 .footer-inner{max-width:var(--max-width);margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
 
