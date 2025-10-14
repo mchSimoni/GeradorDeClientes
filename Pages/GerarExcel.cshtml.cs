@@ -17,33 +17,10 @@ namespace GeradorDeClientes.Pages
         private readonly IConfiguration _config;
         private readonly ILogger<GerarExcelModel> _logger;
 
-        
-        public string SmtpStatusMessage { get; set; } = string.Empty;
-
         public GerarExcelModel(IConfiguration config, ILogger<GerarExcelModel> logger)
         {
             _config = config;
             _logger = logger;
-
-            try
-            {
-                var smtpSection = _config.GetSection("Smtp");
-                var host = smtpSection.GetValue<string>("Host");
-                var port = smtpSection.GetValue<int>("Port");
-                var user = smtpSection.GetValue<string>("User");
-                var pass = smtpSection.GetValue<string>("Pass");
-                var forcePickup = smtpSection.GetValue<bool>("ForcePickup");
-
-                bool smtpLooksValid = !string.IsNullOrEmpty(host) && host != "smtp.example.com" && port > 0 && !string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(pass);
-
-                var maskedUser = string.IsNullOrEmpty(user) ? "(none)" : (user.Length > 3 ? user.Substring(0, 3) + "***" : user);
-                SmtpStatusMessage = $"SMTP: host={(string.IsNullOrEmpty(host) ? "(none)" : host)}, user={maskedUser}, port={port}, ForcePickup={forcePickup}. Valid={smtpLooksValid}";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Erro ao ler configuração SMTP para diagnóstico");
-                SmtpStatusMessage = "SMTP: não disponível";
-            }
         }
 
         public string Mensagem { get; set; } = string.Empty;
@@ -57,46 +34,7 @@ namespace GeradorDeClientes.Pages
             try
             {
                 
-                try
-                {
-                    _logger.LogInformation("OnPost chamado com quantidade={Quantidade}, action={Action}, delimiter={Delimiter}, targetEmail={TargetEmail}", quantidade, action, delimiter, targetEmail);
-                    foreach (var key in Request.Form.Keys)
-                    {
-                        _logger.LogInformation("Form[{Key}] = {Value}", key, Request.Form[key]);
-                    }
-                    
-                    var raw = Request.Form["quantidade"].ToString();
-                    if (!string.IsNullOrEmpty(raw) && int.TryParse(raw, out var qFromForm))
-                    {
-                        if (qFromForm != quantidade)
-                        {
-                            _logger.LogInformation("Substituindo quantidade vinculada {Bound} pelo valor do formulário {FormVal}", quantidade, qFromForm);
-                            quantidade = qFromForm;
-                        }
-                    }
-                    // atribui à propriedade do modelo para preservar o input do usuário
-                    Quantidade = quantidade;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Erro ao logar/ler Request.Form");
-                }
-                // Additional file log for diagnosing email send attempts (safe, appends simple lines)
-                try
-                {
-                    var logDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logs");
-                    Directory.CreateDirectory(logDir);
-                    var logFile = Path.Combine(logDir, "email_send.log");
-                    var line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} OnPost action={action ?? "(null)"} targetEmail={targetEmail ?? "(null)"} quantidade={quantidade}\n";
-                    System.IO.File.AppendAllText(logFile, line);
-                    // Also dump the full Request.Form for debugging (one line per key)
-                    foreach (var key in Request.Form.Keys)
-                    {
-                        var val = Request.Form[key];
-                        System.IO.File.AppendAllText(logFile, $"    Form[{key}]={val}\n");
-                    }
-                }
-                catch { /* don't fail on logging */ }
+                Quantidade = quantidade;
                 
             if (quantidade < 10) quantidade = 10;
             if (quantidade > 1000) quantidade = 1000;
@@ -119,36 +57,26 @@ namespace GeradorDeClientes.Pages
                     var filePathExisting = latest.FullName;
                     var fileNameExisting = latest.Name;
 
-                    // prefer the targetEmail provided by the user; fallback to fixed recipient if none provided
-                    var recipient = !string.IsNullOrWhiteSpace(targetEmail) ? targetEmail : "sergio.junior@atak.com.br";
-
-                    if (string.IsNullOrWhiteSpace(recipient))
+                    if (string.IsNullOrWhiteSpace(targetEmail))
                     {
                         Mensagem = "Informe um e-mail de destino para envio.";
                         return Page();
                     }
 
-                    _logger.LogInformation("Tentando enviar arquivo existente {File} para {Target}", fileNameExisting, recipient);
-
-                    var repoUrl = _config.GetValue<string>("RepoUrl") ?? "https://github.com/SEU_USUARIO/SEU_REPOSITORIO";
-                    var deployUrl = _config.GetValue<string>("DeployUrl") ?? "https://seu-app-publicado.example.com";
-
-                    var sendResult = SendEmailWithAttachment(filePathExisting, fileNameExisting, recipient, repoUrl, deployUrl);
-                    if (!string.IsNullOrEmpty(sendResult))
+                    var sent = SendEmailWithAttachment(filePathExisting, fileNameExisting, targetEmail);
+                    if (sent)
                     {
-                        _logger.LogWarning("Envio SMTP não executado; .eml salvo em {Path}", sendResult);
-                        Mensagem = $"Arquivo não gerado agora. Não foi possível enviar via SMTP; email salvo em: {sendResult}";
+                        Mensagem = $"Arquivo enviado por email com sucesso: {fileNameExisting} para {targetEmail}";
                     }
                     else
                     {
-                        _logger.LogInformation("Envio SMTP realizado com sucesso para {Target}", recipient);
-                        Mensagem = $"Arquivo enviado por email com sucesso: {fileNameExisting} para {recipient}";
+                        Mensagem = "Não foi possível enviar o e-mail. Verifique a configuração de SMTP.";
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Falha ao enviar arquivo existente por email");
-                    Mensagem = $"Falha ao enviar por e-mail: {ex.Message}";
+                    _logger.LogWarning(ex, "Falha ao enviar arquivo existente por email");
+                    Mensagem = "Não foi possível enviar o e-mail.";
                 }
 
                 return Page();
@@ -210,7 +138,7 @@ namespace GeradorDeClientes.Pages
                     var showingRecords = Math.Max(0, lastRow - 1);
 
                     var sb = new System.Text.StringBuilder();
-                    sb.AppendLine($"<div style=\"margin-bottom:6px;font-size:0.95rem;color:#333;\">Mostrando {showingRecords} de {totalRecords} registros</div>");
+                    sb.AppendLine($"<div style=\"margin-bottom:6px;font-size:0.95rem;\">Mostrando {showingRecords} de {totalRecords} registros</div>");
                     sb.AppendLine("<div style=\"overflow:auto; max-height:600px; border:1px solid #ddd; padding:8px;\">\n");
                     sb.AppendLine("<table style=\"border-collapse:collapse; width:100%;\">\n");
                     sb.AppendLine("<thead><tr>");
@@ -219,7 +147,7 @@ namespace GeradorDeClientes.Pages
                     for (int c = 1; c <= lastCol; c++)
                     {
                         var h = ws.Cell(1, c).GetString();
-                        sb.AppendLine($"<th style=\"border:1px solid #ccc; padding:4px; text-align:left; background:#f5f5f5;\">{System.Net.WebUtility.HtmlEncode(h)}</th>");
+                        sb.AppendLine($"<th style=\"border:1px solid #ccc; padding:4px; text-align:left;\">{System.Net.WebUtility.HtmlEncode(h)}</th>");
                     }
                     sb.AppendLine("</tr></thead>");
                     sb.AppendLine("<tbody>");
@@ -257,8 +185,8 @@ namespace GeradorDeClientes.Pages
             }
         }
 
-    // Returns empty string when sent successfully, or the path where .eml was saved when SMTP not available
-    private string SendEmailWithAttachment(string filePath, string fileName, string toEmail, string repoUrl, string deployUrl)
+    // Returns true when sent successfully, false otherwise
+    private bool SendEmailWithAttachment(string filePath, string fileName, string toEmail)
     {
         // Ler configurações SMTP
         var smtpSection = _config.GetSection("Smtp");
@@ -271,13 +199,13 @@ namespace GeradorDeClientes.Pages
 
         bool smtpLooksValid = !string.IsNullOrEmpty(host) && host != "smtp.example.com" && port > 0 && !string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(pass);
 
-        // Build the message using MimeKit
+    // Build the message using MimeKit
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(user ?? "noreply", !string.IsNullOrEmpty(user) ? user : "noreply@example.com"));
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = "[GeradorDeClientes] - Dados Gerados";
 
-        var bodyText = $"Segue em anexo o arquivo gerado pelo GeradorDeClientes.\n\nRepositório: {repoUrl}\nAplicação publicada: {deployUrl}\n\nObrigado.";
+        var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes. Obrigado.";
         var body = new TextPart("plain")
         {
             Text = bodyText
@@ -304,93 +232,42 @@ namespace GeradorDeClientes.Pages
 
         message.Body = multipart;
 
-        // If forcePickup is true, save to pickup directory (.eml)
-        var pickupDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "emails_test");
+        if (!smtpLooksValid || forcePickup)
+        {
+            return false;
+        }
+
         try
         {
-            if (forcePickup)
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
-                Directory.CreateDirectory(pickupDir);
-                var emlPath = Path.Combine(pickupDir, Path.GetFileNameWithoutExtension(fileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".eml");
-                using (var stream = System.IO.File.Create(emlPath))
+                SecureSocketOptions socketOptions;
+                if (enableSsl)
                 {
-                    message.WriteTo(stream);
+                    socketOptions = (port == 465) ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
                 }
-                return pickupDir;
-            }
-
-            if (smtpLooksValid)
-            {
-                using (var client = new MailKit.Net.Smtp.SmtpClient())
+                else
                 {
-                    // Accept all SSL certs (useful for dev, but consider stricter validation in production)
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-                    SecureSocketOptions socketOptions = enableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None;
-                    try
-                    {
-                        client.Connect(host, port, socketOptions);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Falha ao conectar SMTP {Host}:{Port}", host, port);
-                        // fall back to saving .eml
-                        Directory.CreateDirectory(pickupDir);
-                        var emlPath = Path.Combine(pickupDir, Path.GetFileNameWithoutExtension(fileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".eml");
-                        using (var stream = System.IO.File.Create(emlPath))
-                        {
-                            message.WriteTo(stream);
-                        }
-                        return pickupDir;
-                    }
-
-                    if (!string.IsNullOrEmpty(user))
-                    {
-                        client.Authenticate(user, pass);
-                    }
-
-                    client.Send(message);
-                    client.Disconnect(true);
+                    socketOptions = SecureSocketOptions.None;
                 }
 
-                return string.Empty; // sent successfully
+                client.Connect(host, port, socketOptions);
+
+                if (!string.IsNullOrEmpty(user))
+                {
+                    client.Authenticate(user, pass);
+                }
+
+                client.Send(message);
+                client.Disconnect(true);
             }
+
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Envio via MailKit falhou, salvando .eml localmente para inspeção");
-            try
-            {
-                Directory.CreateDirectory(pickupDir);
-                var emlPath = Path.Combine(pickupDir, Path.GetFileNameWithoutExtension(fileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".eml");
-                using (var stream = System.IO.File.Create(emlPath))
-                {
-                    message.WriteTo(stream);
-                }
-                return pickupDir;
-            }
-            catch (Exception ex2)
-            {
-                _logger.LogError(ex2, "Falha ao salvar .eml localmente.");
-                throw;
-            }
-        }
-
-        // Final fallback: save .eml
-        try
-        {
-            Directory.CreateDirectory(pickupDir);
-            var emlPath = Path.Combine(pickupDir, Path.GetFileNameWithoutExtension(fileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".eml");
-            using (var stream = System.IO.File.Create(emlPath))
-            {
-                message.WriteTo(stream);
-            }
-            return pickupDir;
-        }
-        catch (Exception ex3)
-        {
-            _logger.LogError(ex3, "Falha ao salvar .eml no fallback final.");
-            throw;
+            _logger.LogWarning(ex, "Falha ao enviar e-mail via SMTP");
+            return false;
         }
     }
 

@@ -1,4 +1,7 @@
 using GeradorDeClientes.Services;
+using GeradorDeClientes.Data;
+using Microsoft.EntityFrameworkCore;
+// Production-ready: removed test endpoints and diagnostic-only usings
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +20,14 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// User service (file-backed)
-builder.Services.AddSingleton<GeradorDeClientes.Services.IUserService, GeradorDeClientes.Services.FileUserService>();
+// EF Core SQLite DbContext (file in App_Data)
+var dataDir = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
+Directory.CreateDirectory(dataDir);
+var dbPath = Path.Combine(dataDir, "app.db");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+
+// User service (EF-backed)
+builder.Services.AddScoped<GeradorDeClientes.Services.IUserService, GeradorDeClientes.Services.EfUserService>();
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
@@ -29,6 +38,20 @@ builder.Services.AddAuthentication("Cookies")
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Ensure DB created (apply migrations or create schema)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch
+    {
+        db.Database.EnsureCreated();
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
