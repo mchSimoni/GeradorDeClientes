@@ -27,11 +27,11 @@ header{background:transparent}
 .site-title{
   /* place the title closer to the content rather than pinning to top */
   position:relative;
-  display:inline-block;
-  margin:18px auto 8px auto;
-  left:auto;
-  transform:none;
-  top:auto;
+  display:block;
+  width:-webkit-fit-content;
+  width:-moz-fit-content;
+  width:fit-content;
+  margin:18px auto 8px auto; /* center via auto margins */
   font-size:2.6rem; /* bigger */
   font-weight:900;
   color:var(--accent) !important;
