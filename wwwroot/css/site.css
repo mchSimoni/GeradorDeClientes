@@ -98,12 +98,12 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 
 /* login */
 /* Card used on auth pages */
-.login-box{max-width:680px;margin:0 auto;padding:44px;background:#0f1726;/* slightly lighter than page bg */border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04)}
+.login-box{max-width:860px;margin:0 auto;padding:56px;background:#0f1726;/* slightly lighter than page bg */border-radius:18px;box-shadow:0 32px 100px rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.05)}
 
 /* Center the auth card exactly in the viewport on auth pages */
 .login-page .container.content-wrap{position:relative}
 .login-page main{width:100%}
-.login-page .login-box{position:fixed;left:50%;top:55%;transform:translate(-50%,-50%);max-width:720px;padding:44px}
+.login-page .login-box{position:fixed;left:50%;top:56%;transform:translate(-50%,-50%);max-width:860px;padding:56px}
 
 /* On small screens use normal flow instead of fixed positioning */
 @media(max-width:767px){
@@ -125,9 +125,11 @@ main .login-box{margin-top:0}
   .content-wrap{justify-content:center;min-height:calc(100vh - 160px)}
 }
 
-.login-box h2{color:#f3fbfd;margin-bottom:12px}
-.login-box .form-label{color:var(--muted)}
-.login-box .form-control{color:#dbeef0;background:#071020;border:1px solid rgba(255,255,255,0.04)}
+.login-box h2{color:#f3fbfd;margin-bottom:18px}
+.login-box .form-label{color:var(--muted);display:block;margin-bottom:8px}
+.login-box .form-group{margin-bottom:18px}
+.login-box .form-control{color:#dbeef0;background:#071020;border:1px solid rgba(255,255,255,0.04);padding:14px 16px;height:46px;border-radius:10px}
+.login-box .btn-primary{padding:12px 22px;font-size:1rem}
 
 /* Floating title card (matches login card visual) */
 .floating-title{
