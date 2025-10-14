@@ -218,9 +218,10 @@ main .login-box{margin-top:0}
   justify-content:center !important;
   flex-direction:column !important;
   z-index:20;
-  /* keep the box from touching the footer by limiting its height and allowing internal scroll */
+  /* allow the page to scroll; keep reasonable max height so footer is visible */
   max-height:calc(100vh - 160px);
-  overflow-y:auto;
+  overflow-y:visible; /* let the document handle scrolling to avoid nested scrollbars */
+  padding-bottom:120px !important; /* extra breathing room so card doesn't touch footer */
 }
 
 .gerar-card{padding-top:28px}
@@ -238,7 +239,7 @@ main .login-box{margin-top:0}
 .gerar-card .d-flex{gap:8px}
 
 /* ensure preview takes full available width inside the card */
-.gerar-card .preview-wrapper{width:100%;box-sizing:border-box;padding:10px;max-height:420px;overflow:auto}
+.gerar-card .preview-wrapper{width:100%;box-sizing:border-box;padding:10px;max-height:none !important;overflow:visible !important}
 .gerar-card .preview-wrapper table.preview{width:100%}
 
 .footer-inner{max-width:var(--max-width);margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
