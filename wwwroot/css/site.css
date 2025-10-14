@@ -203,9 +203,19 @@ main .login-box{margin-top:0}
 }
 
 /* Gerar Excel box - centered card like login */
-.gerar-box{max-width:900px;margin:40px auto;padding:0 20px}
-.gerar-box h2{color:#f6fbfc;margin-bottom:14px}
-.gerar-card{max-width:380px;padding:18px;background:linear-gradient(180deg, rgba(8,12,18,0.95), rgba(7,10,16,0.97));border-radius:12px;box-shadow:0 14px 40px rgba(2,6,10,0.5);border:1px solid rgba(255,255,255,0.02)}
+.gerar-box{
+  max-width:900px;
+  margin:0 auto;
+  padding:0 20px;
+  /* center the content in the viewport */
+  min-height:calc(100vh - 220px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+.gerar-box h2{color:#f6fbfc;margin-bottom:14px;text-align:center}
+.gerar-card{max-width:420px;padding:18px 18px 22px;background:linear-gradient(180deg, rgba(8,12,18,0.95), rgba(7,10,16,0.97));border-radius:12px;box-shadow:0 14px 40px rgba(2,6,10,0.5);border:1px solid rgba(255,255,255,0.02)}
 .gerar-card .form-control{width:90px;color:#e6eef3;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.03);padding:8px 10px;height:38px;border-radius:8px}
 .gerar-card .btn-outline{border-color:rgba(255,255,255,0.06);color:#cbd6da;background:transparent;padding:6px 10px;border-radius:8px}
 .gerar-card .btn-primary{padding:8px 14px}
