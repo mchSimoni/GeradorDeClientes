@@ -246,9 +246,10 @@ main .login-box{margin-top:0}
 
 /* When the page sets the gerar-page body class, center the gerar-box like the login page */
 .gerar-page .content-wrap{height:100vh;display:flex;align-items:center;justify-content:center}
+.gerar-page .container.content-wrap{max-width:100%;padding-left:0;padding-right:0}
 .gerar-page main{width:100%;display:flex;justify-content:center}
-.gerar-page .gerar-box{min-height:0; margin:0; padding:0}
-.gerar-page .gerar-card{margin:0 auto}
+.gerar-page .gerar-box{min-height:0; margin:0; padding:0;width:100%;display:flex;justify-content:center}
+.gerar-page .gerar-card{margin:0 auto;max-width:760px;width:80%}
 
 @media(max-width:767px){
   .gerar-page .content-wrap{align-items:flex-start;padding-top:48px}
