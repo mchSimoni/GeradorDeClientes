@@ -204,23 +204,24 @@ main .login-box{margin-top:0}
 
 /* Gerar Excel box - centered card like login */
 .gerar-box{
-  /* Keep the gerar area in normal document flow so it sits below the header.
-     This avoids layout overlap caused by fixed positioning. */
+  /* Center the gerar area within the available viewport space (between header and footer).
+     Keep it in document flow but center its child (.gerar-card) both horizontally and vertically.
+  */
   position:relative;
   left:auto;
   top:auto;
   transform:none;
   width:100%;
   max-width:var(--max-width);
-  margin:28px auto 0 auto; /* space below header */
+  margin:0 auto;
   padding:12px 20px;
   display:flex;
-  align-items:flex-start;
-  justify-content:center;
+  align-items:center;    /* vertical alignment of the child */
+  justify-content:center;/* horizontal centering */
   flex-direction:column;
   z-index:20;
-  /* allow the document to handle scrolling; ensure footer gap */
-  max-height:none;
+  /* center within remaining viewport space: header (~160px) + footer (~60px) reserved */
+  min-height:calc(100vh - 220px);
   overflow:visible;
   padding-bottom:80px;
 }
