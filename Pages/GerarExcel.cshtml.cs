@@ -39,7 +39,7 @@ namespace GeradorDeClientes.Pages
             if (quantidade < 10) quantidade = 10;
             if (quantidade > 1000) quantidade = 1000;
             
-            // If the action is 'enviar', do not create a new XLSX; instead try to send the most recently generated file
+            
             if (string.Equals(action, "enviar", StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -52,7 +52,7 @@ namespace GeradorDeClientes.Pages
                         return Page();
                     }
 
-                    // pick the latest file by LastWriteTime
+                    
                     var latest = files.Select(f => new FileInfo(f)).OrderByDescending(fi => fi.LastWriteTime).First();
                     var filePathExisting = latest.FullName;
                     var fileNameExisting = latest.Name;
@@ -82,16 +82,16 @@ namespace GeradorDeClientes.Pages
                 return Page();
             }
 
-            // otherwise (default) generate the XLSX file and show preview / download link
+            
             var fileName = $"Clientes_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
 
             var rand = new Random();
-            // Create XLSX using ClosedXML (XLSX-only mode)
+            
             using (var wb = new XLWorkbook())
             {
                 var ws = wb.Worksheets.Add("Clientes");
-                // Headers
+                
                 ws.Cell(1, 1).Value = "Nome";
                 ws.Cell(1, 2).Value = "Email";
                 ws.Cell(1, 3).Value = "Telefone";
@@ -116,7 +116,7 @@ namespace GeradorDeClientes.Pages
                     ws.Cell(row, 9).Value = GenerateCpf(rand);
                 }
 
-                // Adjust columns
+                
                 ws.Columns().AdjustToContents();
                 wb.SaveAs(filePath);
             }
@@ -125,13 +125,13 @@ namespace GeradorDeClientes.Pages
 
             Mensagem = $"Arquivo gerado com sucesso: {fileName}";
 
-            // Gera preview: lê o arquivo XLSX e monta uma tabela HTML (mostra até 1000 linhas)
+            
             try
             {
                 using (var wb = new XLWorkbook(filePath))
                 {
                     var ws = wb.Worksheet(1);
-                    var lastRow = Math.Min(ws.LastRowUsed()?.RowNumber() ?? 1, 1001); // header + up to 1000 rows
+                    var lastRow = Math.Min(ws.LastRowUsed()?.RowNumber() ?? 1, 1001);
                     var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 1;
 
                     var totalRecords = Math.Max(0, (ws.LastRowUsed()?.RowNumber() ?? 1) - 1);
@@ -143,7 +143,7 @@ namespace GeradorDeClientes.Pages
                     sb.AppendLine("<table style=\"border-collapse:collapse; width:100%;\">\n");
                     sb.AppendLine("<thead><tr>");
 
-                    // headers
+                    
                     for (int c = 1; c <= lastCol; c++)
                     {
                         var h = ws.Cell(1, c).GetString();
@@ -178,17 +178,17 @@ namespace GeradorDeClientes.Pages
             }
             catch (Exception ex)
             {
-                // Em caso de erro inesperado, logamos e apresentamos mensagem amigável
+                
                 Console.Error.WriteLine(ex.ToString());
                 Mensagem = "Ocorreu um erro ao gerar o arquivo: " + ex.Message;
                 return Page();
             }
         }
 
-    // Returns true when sent successfully, false otherwise
+    
     private bool SendEmailWithAttachment(string filePath, string fileName, string toEmail)
     {
-        // Ler configurações SMTP
+        
         var smtpSection = _config.GetSection("Smtp");
         var host = smtpSection.GetValue<string>("Host");
         var port = smtpSection.GetValue<int>("Port");
@@ -199,13 +199,18 @@ namespace GeradorDeClientes.Pages
 
         bool smtpLooksValid = !string.IsNullOrEmpty(host) && host != "smtp.example.com" && port > 0 && !string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(pass);
 
-    // Build the message using MimeKit
+    
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(user ?? "noreply", !string.IsNullOrEmpty(user) ? user : "noreply@example.com"));
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = "[GeradorDeClientes] - Dados Gerados";
 
-        var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes. Obrigado.";
+    var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes.\n\n" +
+               "Repositório: https://github.com/mchSimoni/GeradorDeClientes\n" +
+               "Página de login: https://geradordeclientes-production.up.railway.app/Login\n\n" +
+               "Observação: devido a uma restrição da plataforma Railway, o envio de e-mail via SMTP não é permitido quando a aplicação está hospedada no Railway. " +
+               "Portanto, o envio só funcionará quando você executar a aplicação localmente com as credenciais SMTP configuradas.\n\n" +
+               "Obrigado.";
         var body = new TextPart("plain")
         {
             Text = bodyText
@@ -213,7 +218,7 @@ namespace GeradorDeClientes.Pages
 
         var multipart = new Multipart("mixed") { body };
 
-        // Attach the file
+        
         try
         {
             var attachment = new MimePart("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -273,7 +278,7 @@ namespace GeradorDeClientes.Pages
 
         private string GenerateCpf(Random rand)
         {
-            // Gera um CPF simples (não validado), formato 000.000.000-00
+            
             int n1 = rand.Next(100, 999);
             int n2 = rand.Next(100, 999);
             int n3 = rand.Next(100, 999);
@@ -281,7 +286,7 @@ namespace GeradorDeClientes.Pages
             return $"{n1}.{n2}.{n3}-{n4}";
         }
 
-        // Serve the file and delete it after sending to avoid accumulation in wwwroot
+        
         public IActionResult OnGetDownload(string file)
         {
             if (string.IsNullOrEmpty(file)) return NotFound();
@@ -294,14 +299,14 @@ namespace GeradorDeClientes.Pages
             if (file.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase)) contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             if (file.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)) contentType = "text/csv";
 
-            // Try to delete after returning file stream
+            
             try
             {
-                // Return file bytes to the client. Schedule cleanup of old files in background
+                
                 Response.Headers["Cache-Control"] = "private, max-age=0, must-revalidate";
                 var result = File(content, contentType, file);
 
-                // cleanup older than 10 minutes in background (not blocking response)
+                
                 Task.Run(() => CleanupOldGeneratedFiles(TimeSpan.FromMinutes(10)));
 
                 return result;
