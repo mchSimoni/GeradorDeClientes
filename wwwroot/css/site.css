@@ -25,19 +25,22 @@ header{background:transparent}
 
 /* Site title styling (fixed, centered) */
 .site-title{
-  position:fixed;
-  left:50%;
-  transform:translateX(-50%);
-  top:8px;
-  font-size:1.9rem;
-  font-weight:800;
+  /* place the title closer to the content rather than pinning to top */
+  position:relative;
+  display:inline-block;
+  margin:18px auto 8px auto;
+  left:auto;
+  transform:none;
+  top:auto;
+  font-size:2.6rem; /* bigger */
+  font-weight:900;
   color:var(--accent) !important;
   text-align:center;
-  z-index:5000;
+  z-index:20;
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
 @media(max-width:767px){
-  .site-title{position:relative;left:auto;transform:none;top:auto;font-size:1.4rem;margin:8px 0}
+  .site-title{position:relative;left:auto;transform:none;top:auto;font-size:1.6rem;margin:8px 0}
 }
 
 /* On the login page make the site title larger and centered */
