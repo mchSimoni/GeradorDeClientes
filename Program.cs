@@ -77,4 +77,32 @@ app.MapGet("/", context =>
 
 app.MapRazorPages();
 
+// Diagnostic endpoint (only enabled when ALLOW_DIAG=true)
+var allowDiag = builder.Configuration.GetValue<bool?>("ALLOW_DIAG") ?? false;
+if (allowDiag)
+{
+    app.MapGet("/api/diag", async (IServiceProvider services) =>
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var dbFile = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "app.db");
+            var exists = System.IO.File.Exists(dbFile);
+            int? users = null;
+            try
+            {
+                users = await db.Usuarios.CountAsync();
+            }
+            catch { /* ignore errors reading db */ }
+
+            return Results.Json(new { dbExists = exists, users });
+        }
+        catch (Exception ex)
+        {
+            return Results.Json(new { error = ex.Message });
+        }
+    });
+}
+
 app.Run();
