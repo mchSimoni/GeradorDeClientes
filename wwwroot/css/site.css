@@ -169,10 +169,10 @@ main .login-box{margin-top:0}
 /* Floating title card (matches login card visual) */
 .floating-title{
   /* pin the site title to the top center of the page */
-  position:fixed;
-  left:50%;
-  top:18px; /* small offset from top */
-  transform:translateX(-50%);
+  position:fixed !important;
+  left:50% !important;
+  top:18px !important; /* small offset from top */
+  transform:translateX(-50%) !important;
   background:transparent;
   color:var(--accent);
   padding:0 8px;
@@ -204,17 +204,26 @@ main .login-box{margin-top:0}
 
 /* Gerar Excel box - centered card like login */
 .gerar-box{
-  /* occupy full width so centering is exact regardless of outer containers */
+  /* Force the gerar card to be centered in the viewport regardless of wrapper containers */
+  position:fixed !important;
+  left:50% !important;
+  top:55% !important; /* a touch below the title */
+  transform:translate(-50%,-50%) !important;
   width:100%;
-  max-width:100%;
-  margin:0;
-  padding:0;
-  /* center the content in the viewport */
-  min-height:calc(100vh - 140px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
+  max-width:980px;
+  margin:0 !important;
+  padding:0 20px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-direction:column !important;
+  z-index:20;
+}
+
+/* Mobile: revert to normal flow so fixed positioning doesn't break small screens */
+@media(max-width:767px){
+  .gerar-box{position:relative !important;left:auto !important;top:auto !important;transform:none !important;min-height:auto;padding:12px}
+  .floating-title{position:relative !important;top:auto !important;transform:none !important;left:auto !important;margin:8px auto}
 }
 .gerar-box h2{color:#f6fbfc;margin-bottom:14px;text-align:center}
 .gerar-card{max-width:420px;padding:18px 18px 22px;background:linear-gradient(180deg, rgba(8,12,18,0.95), rgba(7,10,16,0.97));border-radius:12px;box-shadow:0 14px 40px rgba(2,6,10,0.5);border:1px solid rgba(255,255,255,0.02)}
