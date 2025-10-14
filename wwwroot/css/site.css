@@ -171,7 +171,7 @@ main .login-box{margin-top:0}
   /* pin the site title to the top center of the page */
   position:fixed !important;
   left:50% !important;
-  top:18px !important; /* small offset from top */
+  top:12px !important; /* small offset from top */
   transform:translateX(-50%) !important;
   background:transparent;
   color:var(--accent);
@@ -179,7 +179,7 @@ main .login-box{margin-top:0}
   border-radius:6px;
   box-shadow:none;
   border:none;
-  font-size:3.6rem; /* large headline but not excessive */
+  font-size:2.6rem; /* slightly smaller to avoid overlap */
   letter-spacing:0.6px;
   font-weight:900;
   z-index:9999;
@@ -207,7 +207,7 @@ main .login-box{margin-top:0}
   /* Force the gerar card to be centered in the viewport regardless of wrapper containers */
   position:fixed !important;
   left:50% !important;
-  top:55% !important; /* a touch below the title */
+  top:62% !important; /* push the card lower so it doesn't overlap the title */
   transform:translate(-50%,-50%) !important;
   width:100%;
   max-width:980px;
@@ -219,6 +219,8 @@ main .login-box{margin-top:0}
   flex-direction:column !important;
   z-index:20;
 }
+
+.gerar-card{padding-top:28px}
 
 /* Mobile: revert to normal flow so fixed positioning doesn't break small screens */
 @media(max-width:767px){
