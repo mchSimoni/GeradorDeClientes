@@ -1,17 +1,18 @@
 :root{
-  --bg:#f6f8fa;
-  --card:#ffffff;
-  --accent:#2b8a3e; /* green accent */
-  --muted:#6c757d;
-  --radius:10px;
-  --shadow: 0 10px 30px rgba(29,33,41,0.06);
+  /* darker theme palette */
+  --bg:#0f1720; /* deep slate */
+  --card:#0b1220; /* card slightly lighter than bg */
+  --accent:#1fa44a; /* vivid green for accents */
+  --muted:#9aa6b2;
+  --radius:12px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
   --max-width:1100px;
   --container-padding:20px;
 }
 
 /* Base typography and layout */
 html, body{height:100%;}
-html{font-family:Inter, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:15px; background:var(--bg); color:#222}
+html{font-family:Inter, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:15px; background:var(--bg); color:#e6eef3}
 body{background:var(--bg);margin:0;-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
 @media(min-width:768px){html{font-size:16px}}
 
@@ -33,7 +34,7 @@ header{background:transparent}
   color:var(--accent) !important;
   text-align:center;
   z-index:5000;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
 @media(max-width:767px){
   .site-title{position:relative;left:auto;transform:none;top:auto;font-size:1.4rem;margin:8px 0}
@@ -91,7 +92,7 @@ table.preview tbody tr:nth-child(odd){background:#fff}
 
 /* login */
 /* Card used on auth pages */
-.login-box{max-width:520px;margin:0 auto;padding:28px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.login-box{max-width:520px;margin:0 auto;padding:28px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
 
 /* Center the auth card exactly in the viewport on auth pages */
 .login-page .container.content-wrap{position:relative}
@@ -118,20 +119,29 @@ main .login-box{margin-top:0}
   .content-wrap{justify-content:center;min-height:calc(100vh - 160px)}
 }
 
-.login-box h2{color:#222;margin-bottom:8px}
-.login-box .form-label{color:#2e3438}
-.login-box .form-control{color:#222}
+.login-box h2{color:#dbeef0;margin-bottom:8px}
+.login-box .form-label{color:var(--muted)}
+.login-box .form-control{color:#dbeef0;background:#071020;border:1px solid rgba(255,255,255,0.04)}
 
 /* Hero / callout on the index page */
 .hero{
   width:100%;
-  background:linear-gradient(180deg, rgba(43,138,62,0.06), rgba(43,138,62,0.02));
+  background:linear-gradient(180deg, rgba(31,164,74,0.06), rgba(31,164,74,0.02));
   border-radius:12px;
   padding:24px;
   margin-bottom:16px;
 }
 
-.footer-inner{max-width:var(--max-width);margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:center}
+.footer-inner{max-width:var(--max-width);margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
 
 /* Footer with no top border to avoid a thin line appearing over content */
-footer.footer{padding:12px 0;background:transparent;color:var(--muted);border-top:none;position:relative;z-index:0}
+footer.footer{padding:18px 0;background:transparent;color:var(--muted);border-top:none;position:relative;z-index:0}
+
+/* Dark theme button tweaks */
+.btn-primary{background:var(--accent);border-color:transparent}
+.btn-primary:hover{filter:brightness(0.94)}
+
+/* small responsive tweaks for dark layout */
+@media(max-width:767px){
+  .content-wrap{padding-top:48px;padding-bottom:48px}
+}
