@@ -207,7 +207,7 @@ main .login-box{margin-top:0}
   /* Force the gerar card to be centered in the viewport regardless of wrapper containers */
   position:fixed !important;
   left:50% !important;
-  top:50% !important; /* center vertically */
+  top:56% !important; /* nudge the card lower so header and controls have breathing room */
   transform:translate(-50%,-50%) !important;
   width:100%;
   max-width:100%;
@@ -224,7 +224,7 @@ main .login-box{margin-top:0}
   padding-bottom:120px !important; /* extra breathing room so card doesn't touch footer */
 }
 
-.gerar-card{padding-top:28px}
+.gerar-card{padding-top:40px}
 
 /* Mobile: revert to normal flow so fixed positioning doesn't break small screens */
 @media(max-width:767px){
