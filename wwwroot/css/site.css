@@ -204,24 +204,25 @@ main .login-box{margin-top:0}
 
 /* Gerar Excel box - centered card like login */
 .gerar-box{
-  /* Force the gerar card to be centered in the viewport regardless of wrapper containers */
-  position:fixed !important;
-  left:50% !important;
-  top:56% !important; /* nudge the card lower so header and controls have breathing room */
-  transform:translate(-50%,-50%) !important;
+  /* Keep the gerar area in normal document flow so it sits below the header.
+     This avoids layout overlap caused by fixed positioning. */
+  position:relative;
+  left:auto;
+  top:auto;
+  transform:none;
   width:100%;
-  max-width:100%;
-  margin:0 !important;
-  padding:12px 20px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  flex-direction:column !important;
+  max-width:var(--max-width);
+  margin:28px auto 0 auto; /* space below header */
+  padding:12px 20px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  flex-direction:column;
   z-index:20;
-  /* allow the page to scroll; keep reasonable max height so footer is visible */
-  max-height:calc(100vh - 160px);
-  overflow-y:visible; /* let the document handle scrolling to avoid nested scrollbars */
-  padding-bottom:120px !important; /* extra breathing room so card doesn't touch footer */
+  /* allow the document to handle scrolling; ensure footer gap */
+  max-height:none;
+  overflow:visible;
+  padding-bottom:80px;
 }
 
 .gerar-card{padding-top:40px}
