@@ -31,7 +31,7 @@ header{background:transparent}
   width:-webkit-fit-content;
   width:-moz-fit-content;
   width:fit-content;
-  margin:18px auto 8px auto; /* center via auto margins */
+  margin:100px auto 12px auto; /* move title down closer to login card */
   font-size:2.6rem; /* bigger */
   font-weight:900;
   color:var(--accent) !important;
