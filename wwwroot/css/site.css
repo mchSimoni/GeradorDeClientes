@@ -229,12 +229,14 @@ main .login-box{margin-top:0}
 .gerar-card{padding-top:40px}
 /* Improve legibility in the gerar card */
 .gerar-card{background:linear-gradient(180deg, rgba(12,16,20,0.98), rgba(7,10,16,0.99));}
-.gerar-card, .gerar-card *{color:#e8f4ef}
+.gerar-card{color:#e8f4ef}
 .gerar-card .form-label{color:#d1e8d7;font-weight:700}
 .gerar-card .btn-outline{color:#d6dbe0}
 .gerar-card .preview-wrapper{background:#fff; padding:12px; border-radius:6px}
 .gerar-card .preview-wrapper table.preview{font-size:0.95rem}
 .gerar-card .preview-wrapper table.preview th, .gerar-card .preview-wrapper table.preview td{padding:10px}
+/* ensure preview text is dark on white background */
+.gerar-card .preview-wrapper, .gerar-card .preview-wrapper *{color:#222 !important}
 
 /* Mobile: revert to normal flow so fixed positioning doesn't break small screens */
 @media(max-width:767px){
