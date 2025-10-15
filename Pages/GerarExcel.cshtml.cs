@@ -205,9 +205,11 @@ namespace GeradorDeClientes.Pages
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = "[GeradorDeClientes] - Dados Gerados";
 
-    var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes.\n\n" +
-               "Página de login: https://geradordeclientes-production.up.railway.app/Login\n\n" +
-               "Obrigado.";
+     var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes.\n\n" +
+         "Página de login: https://geradordeclientes-production.up.railway.app/Login\n\n" +
+         "Repositório: https://github.com/mchSimoni/GeradorDeClientes\n\n" +
+         "Boa noite, execute a aplicação no seu ambiente local que será possível efetuar login e enviar o e‑mail.\n\n" +
+         "Obrigado.";
         var body = new TextPart("plain")
         {
             Text = bodyText
@@ -331,7 +333,7 @@ namespace GeradorDeClientes.Pages
                             info.Delete();
                         }
                     }
-                    catch { /* ignore individual file errors */ }
+                    catch {  }
                 }
             }
             catch (Exception ex)
@@ -341,3 +343,4 @@ namespace GeradorDeClientes.Pages
         }
     }
 }
+
