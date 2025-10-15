@@ -3,7 +3,7 @@
 
 Aplicação ASP.NET Core (Razor Pages) que gera planilhas XLSX com dados fictícios e permite envio por e-mail.
 
-Rápido — como rodar
+Como rodar?
 -------------------
 - Restaurar e compilar:
 
