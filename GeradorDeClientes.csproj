@@ -12,6 +12,8 @@
     <PackageReference Include="ClosedXML" Version="0.104.0" />
     <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.0" />
+  <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

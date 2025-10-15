@@ -1,6 +1,7 @@
 using GeradorDeClientes.Services;
 using GeradorDeClientes.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +38,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
  
 builder.Services.AddScoped<GeradorDeClientes.Services.IUserService, GeradorDeClientes.Services.EfUserService>();
 
+// Persist data protection keys to disk so cookie encryption works across restarts/instances in PaaS
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(dataDir));
+
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
         options.LoginPath = "/Login";
         options.AccessDeniedPath = "/Login";
+        // Make cookie settings more compatible with proxies and HTTPS load balancers
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+        options.Cookie.Path = "/";
+        // Optional: increase expiry for tests
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 builder.Services.AddAuthorization();
 
