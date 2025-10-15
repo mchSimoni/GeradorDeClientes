@@ -49,25 +49,48 @@ namespace GeradorDeClientes.Pages
             var normalizedEmail = Usuario.Email!.Trim().ToLowerInvariant();
             var pwd = Usuario.Senha.Trim();
             var stored = await _userService.GetByEmailAsync(normalizedEmail);
-            if (stored != null && Sha256(pwd) == stored.Senha)
+
+            if (stored == null)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, normalizedEmail),
-                    new Claim(ClaimTypes.Email, normalizedEmail)
-                };
+                _logger.LogWarning("Login failed: user not found for {Email}", normalizedEmail);
+                MensagemErro = "Usuário ou senha inválidos.";
+                return Page();
+            }
 
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
+            _logger.LogInformation("User found: Id={Id} Email={Email} StoredHashLength={Len}", stored.Id, stored.Email, stored.Senha?.Length ?? 0);
 
+            var computedHash = Sha256(pwd);
+            var hashesEqual = string.Equals(computedHash, stored.Senha, StringComparison.OrdinalIgnoreCase);
+            _logger.LogInformation("Password hash comparison for {Email}: computedLen={ComputedLen} equal={Equal}", normalizedEmail, computedHash.Length, hashesEqual);
+
+            if (!hashesEqual)
+            {
+                MensagemErro = "Usuário ou senha inválidos.";
+                _logger.LogWarning("Invalid password for {Email}", normalizedEmail);
+                return Page();
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, normalizedEmail),
+                new Claim(ClaimTypes.Email, normalizedEmail)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            try
+            {
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
                 _logger.LogInformation("Login realizado com sucesso para {Email}", normalizedEmail);
                 return RedirectToPage("/GerarExcel");
             }
-            MensagemErro = "Usuário ou senha inválidos.";
-            _logger.LogInformation("Falha no login para {Email}", Usuario.Email);
-            return Page();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SignInAsync failed for {Email}", normalizedEmail);
+                MensagemErro = "Ocorreu um erro ao autenticar. Verifique os logs do servidor.";
+                return Page();
+            }
         }
     }
 }
