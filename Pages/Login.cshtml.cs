@@ -46,13 +46,15 @@ namespace GeradorDeClientes.Pages
                 return Page();
             }
 
-            var stored = await _userService.GetByEmailAsync(Usuario.Email!);
-            if (stored != null && Sha256(Usuario.Senha) == stored.Senha)
+            var normalizedEmail = Usuario.Email!.Trim().ToLowerInvariant();
+            var pwd = Usuario.Senha.Trim();
+            var stored = await _userService.GetByEmailAsync(normalizedEmail);
+            if (stored != null && Sha256(pwd) == stored.Senha)
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, Usuario.Email),
-                    new Claim(ClaimTypes.Email, Usuario.Email)
+                    new Claim(ClaimTypes.Name, normalizedEmail),
+                    new Claim(ClaimTypes.Email, normalizedEmail)
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -60,10 +62,9 @@ namespace GeradorDeClientes.Pages
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                _logger.LogInformation("Login realizado com sucesso para {Email}", Usuario.Email);
+                _logger.LogInformation("Login realizado com sucesso para {Email}", normalizedEmail);
                 return RedirectToPage("/GerarExcel");
             }
-
             MensagemErro = "Usuário ou senha inválidos.";
             _logger.LogInformation("Falha no login para {Email}", Usuario.Email);
             return Page();

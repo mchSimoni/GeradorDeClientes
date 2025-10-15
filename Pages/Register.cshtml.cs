@@ -54,15 +54,17 @@ namespace GeradorDeClientes.Pages
                 return Page();
             }
 
-            if (await _userService.EmailExistsAsync(Usuario.Email))
+            var normalizedEmail = Usuario.Email.Trim().ToLowerInvariant();
+            if (await _userService.EmailExistsAsync(normalizedEmail))
             {
                 Mensagem = "Este e-mail já está sendo usado.";
                 return Page();
             }
 
-            // store hashed password
-            var hashed = Sha256(Usuario.Senha);
+            var pwd = Usuario.Senha.Trim();
+            var hashed = Sha256(pwd);
             Usuario.Senha = hashed;
+            Usuario.Email = normalizedEmail;
 
             var ok = await _userService.CreateUserAsync(Usuario);
             if (!ok)

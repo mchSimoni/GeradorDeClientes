@@ -64,10 +64,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     var showEmail = document.getElementById('show-email-btn');
     var emailArea = document.getElementById('email-area');
-    // Ensure the form variable exists before using it
+    
     var form = document.getElementById('gerarForm');
     if (showEmail && emailArea) {
-        // Ensure input is disabled when hidden to avoid blocking form submit
+        
         var input = document.querySelector('#email-area input[name="targetEmail"]');
         if (input) input.disabled = true;
 
@@ -75,28 +75,27 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             var isHidden = emailArea.style.display === 'none';
             if (isHidden) {
-                // show the email area and focus
+                
                 emailArea.style.display = 'block';
                 if (input) { input.disabled = false; input.focus(); }
                 return;
             }
 
-            // If already visible, attempt to submit if email is filled
+            
             if (input) {
                 var emailVal = input.value.trim();
                 if (!emailVal) {
                     input.focus();
-                    return; // don't submit if empty
+                    return;
                 }
-                // Instead of programmatic submit with possible ambiguity, set the hidden action
-                // and trigger a click on the enviar button so the browser includes the correct value.
+                
                 var actionHidden = document.getElementById('actionHidden');
                 var enviarBtn = document.getElementById('btn-enviar');
                 if (actionHidden) actionHidden.value = 'enviar';
-                // Ensure targetEmail is enabled so it gets posted
+        
                 input.disabled = false;
                 if (enviarBtn) {
-                    // trigger a click on the enviar button which will submit the form
+                    
                     enviarBtn.click();
                 } else {
                     form.submit();
@@ -105,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Feedback on form submit: show message and disable buttons shortly after click
+    
     var submitMessage = document.getElementById('submitMessage');
     if (form) {
-        // wire gerar and enviar buttons to set hidden action before submit
+        
         var gerarBtn = document.getElementById('btn-gerar');
         var enviarBtn = document.getElementById('btn-enviar');
         var actionHidden = document.getElementById('actionHidden');
@@ -117,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gerarBtn.addEventListener('click', function(evt){
                 if (actionHidden) actionHidden.value = 'gerar';
                 if (submitMessage) { submitMessage.textContent = 'Gerando arquivo, aguarde...'; submitMessage.style.display = 'block'; }
-                // disable buttons shortly after to avoid double submit
+                
                 setTimeout(function(){
                     var buttons = form.querySelectorAll('button');
                     buttons.forEach(function(bb){ bb.disabled = true; });
@@ -136,13 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Fallback: ensure submit message shown for programmatic submits
+        
         form.addEventListener('submit', function(e) {
             if (submitMessage) submitMessage.style.display = 'block';
         });
     }
 
-    // Update button labels according to selected format
-    // Buttons are static for XLSX only
+    
 });
 </script>
