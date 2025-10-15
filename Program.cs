@@ -129,4 +129,53 @@ if (!string.IsNullOrEmpty(diagToken))
     });
 }
 
+// Protected endpoint to test login (POST { email, password }) when DIAG_TOKEN is set
+if (!string.IsNullOrEmpty(diagToken))
+{
+    app.MapPost("/api/test-login", async (HttpContext http, IServiceProvider services) =>
+    {
+        if (!http.Request.Headers.TryGetValue("X-DIAG-TOKEN", out var token) || token != diagToken)
+        {
+            return Results.StatusCode(401);
+        }
+
+        try
+        {
+            var body = await System.Text.Json.JsonSerializer.DeserializeAsync<Dictionary<string, string>>(http.Request.Body);
+            if (body == null || !body.TryGetValue("email", out var email) || !body.TryGetValue("password", out var password))
+            {
+                return Results.Json(new { ok = false, message = "email and password required" });
+            }
+
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            var pwd = password.Trim();
+
+            using var scope = services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var user = await db.Usuarios.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
+            if (user == null)
+            {
+                return Results.Json(new { ok = false, message = "user not found" });
+            }
+
+            // compute SHA256
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            var hashed = System.BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pwd))).Replace("-", "").ToLowerInvariant();
+
+            if (hashed == user.Senha)
+            {
+                return Results.Json(new { ok = true, message = "authenticated" });
+            }
+            else
+            {
+                return Results.Json(new { ok = false, message = "invalid password" });
+            }
+        }
+        catch (Exception ex)
+        {
+            return Results.Json(new { ok = false, error = ex.Message });
+        }
+    });
+}
+
 app.Run();
