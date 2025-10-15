@@ -119,23 +119,54 @@ using (var scope = app.Services.CreateScope())
     // If there are no users and we're running in Production, create a fallback admin user so operator can login
     try
     {
-        if (!builder.Environment.IsDevelopment() && userCount == 0)
+        if (!builder.Environment.IsDevelopment())
         {
-            var tempPwd = "Temp" + Guid.NewGuid().ToString("N").Substring(0, 8) + "!";
-            using var sha = System.Security.Cryptography.SHA256.Create();
-            var hashed = System.BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(tempPwd))).Replace("-", "").ToLowerInvariant();
+            var emergencyEmail = "emergency@admin.local";
 
-            var admin = new GeradorDeClientes.Models.Usuario
+            // Prefer explicit password from env var for predictable access in emergency
+            var envPwd = Environment.GetEnvironmentVariable("EMERGENCY_ADMIN_PASSWORD");
+            string pwdToUse;
+            if (!string.IsNullOrEmpty(envPwd))
             {
-                Email = "admin@localhost",
-                Senha = hashed
-            };
+                pwdToUse = envPwd;
+            }
+            else
+            {
+                // Generate a stable-looking temporary password (will be logged) if env var missing
+                pwdToUse = "Adm" + Guid.NewGuid().ToString("N").Substring(0, 10) + "!";
+            }
 
-            db.Usuarios.Add(admin);
-            await db.SaveChangesAsync();
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            var hashed = System.BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pwdToUse))).Replace("-", "").ToLowerInvariant();
 
-            logger.LogWarning("No users found in DB — created fallback admin account.");
-            logger.LogWarning("Fallback admin credentials: email={Email} password={Pwd}", admin.Email, tempPwd);
+            var existing = await db.Usuarios.FirstOrDefaultAsync(u => u.Email.ToLower() == emergencyEmail.ToLower());
+            if (existing == null)
+            {
+                var admin = new GeradorDeClientes.Models.Usuario
+                {
+                    Email = emergencyEmail,
+                    Senha = hashed
+                };
+                db.Usuarios.Add(admin);
+                await db.SaveChangesAsync();
+                logger.LogWarning("Emergency admin created: email={Email}", emergencyEmail);
+                logger.LogWarning("Emergency admin password: {Pwd}", pwdToUse);
+            }
+            else
+            {
+                // Update password if env var is provided
+                if (!string.IsNullOrEmpty(envPwd))
+                {
+                    existing.Senha = hashed;
+                    db.Usuarios.Update(existing);
+                    await db.SaveChangesAsync();
+                    logger.LogWarning("Emergency admin password updated from env var for email={Email}", emergencyEmail);
+                }
+                else
+                {
+                    logger.LogInformation("Emergency admin already exists: email={Email}", emergencyEmail);
+                }
+            }
         }
     }
     catch (Exception ex)
