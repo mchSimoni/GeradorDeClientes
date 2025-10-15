@@ -149,8 +149,7 @@ using (var scope = app.Services.CreateScope())
                 };
                 db.Usuarios.Add(admin);
                 await db.SaveChangesAsync();
-                logger.LogWarning("Emergency admin created: email={Email}", emergencyEmail);
-                logger.LogWarning("Emergency admin password: {Pwd}", pwdToUse);
+                logger.LogWarning("Recovery admin created: email={Email}", emergencyEmail);
             }
             else
             {
@@ -160,11 +159,11 @@ using (var scope = app.Services.CreateScope())
                     existing.Senha = hashed;
                     db.Usuarios.Update(existing);
                     await db.SaveChangesAsync();
-                    logger.LogWarning("Emergency admin password updated from env var for email={Email}", emergencyEmail);
+                    logger.LogWarning("Recovery admin password updated from env var for email={Email}", emergencyEmail);
                 }
                 else
                 {
-                    logger.LogInformation("Emergency admin already exists: email={Email}", emergencyEmail);
+                    logger.LogInformation("Recovery admin already exists: email={Email}", emergencyEmail);
                 }
             }
         }

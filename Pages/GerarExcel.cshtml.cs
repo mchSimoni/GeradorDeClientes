@@ -206,10 +206,7 @@ namespace GeradorDeClientes.Pages
         message.Subject = "[GeradorDeClientes] - Dados Gerados";
 
     var bodyText = "Segue em anexo o arquivo gerado pelo GeradorDeClientes.\n\n" +
-               "Repositório: https://github.com/mchSimoni/GeradorDeClientes\n" +
                "Página de login: https://geradordeclientes-production.up.railway.app/Login\n\n" +
-               "Observação: devido a uma restrição da plataforma Railway, o envio de e-mail via SMTP não é permitido quando a aplicação está hospedada no Railway. " +
-               "Portanto, o envio só funcionará quando você executar a aplicação localmente com as credenciais SMTP configuradas.\n\n" +
                "Obrigado.";
         var body = new TextPart("plain")
         {
